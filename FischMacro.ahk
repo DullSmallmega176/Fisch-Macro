@@ -20,24 +20,28 @@ F1:: {
 F2::Reload
 F3::ExitApp
 AutoReel() { ; Not Finished
+    static oldX:=0
     GetRobloxClientPos(hwnd:=GetRobloxHWND())
     xPos:=windowX+0.298*windowWidth+.12
     yPos:=windowY+.856*windowHeight-((0.01558*windowWidth+1.1)/2)
     xWidth:=0.403125*windowWidth+2
-    pBitmap:=Gdip_BitmapFromScreen(xPos "|" yPos-20 "|" xWidth "|30")
-    if (Gdip_ImageSearch(pBitmap, bobber, &loc, , , , ,2)) {
-        MouseMove(SubStr(loc, 1, InStr(loc, ",")-1)+xPos, SubStr(loc, InStr(loc, ",")+1)+yPos+10,0)
-        Gdip_DisposeImage(pBitmap)
+    pBMScreen:=Gdip_BitmapFromScreen(xPos "|" yPos-20 "|" xWidth "|30")
+    if (Gdip_ImageSearch(pBMScreen, bobber, &loc, , , , ,2)) {
+        x:=SubStr(loc, 1, InStr(loc, ",")-1)+xPos
+        dir := x-1>oldX ? "->" : x+1<oldX ? "<-" : "-"
+        oldX:=x
+        ToolTip(dir,x, SubStr(loc, InStr(loc, ",")+1)+yPos+30)
+        Gdip_DisposeImage(pBMScreen)
         return 1
     }
-    Gdip_DisposeImage(pBitmap)
+    Gdip_DisposeImage(pBMScreen)
     return 0
 }
 ClickShake() { ; only 1920x1080
     GetRobloxClientPos(hwnd:=GetRobloxHWND())
     pBMScreen:=Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
     if (Gdip_ImageSearch(pBMScreen, shake, &loc, , , , ,15)) {
-        MouseMove(SubStr(loc, 1, InStr(loc, ",")-1)+windowX+40, SubStr(loc, InStr(loc, ",")+1)+windowY+10),Sleep(10), Click(),Sleep(200)
+        MouseMove(SubStr(loc, 1, InStr(loc, ",")-1)+windowX+40, SubStr(loc, InStr(loc, ",")+1)+windowY+10),Sleep(20), Click(),Sleep(300)
     }else if !(AutoReel())
         Sleep(100)
     Gdip_DisposeImage(pBMScreen)
